@@ -16,7 +16,13 @@ export interface CountInfoExtraProps<T> extends Partial<CountInfoProps> {
    * When a callback function is passed in, add functionality is enabled. The callback is invoked before additions are completed.
    * @returns {boolean} Returning false from onAdd will prevent the change from being made.
    */
-  onAdd?: (keyOrValue: string, newValue: T, value: T, isAdd: boolean) => boolean;
+  onAdd?: (
+    keyOrValue: string,
+    newValue: T,
+    value: T,
+    isAdd: boolean,
+    opt: { namespace?: Array<string | number> },
+  ) => boolean;
   /**
    * When a callback function is passed in, delete functionality is enabled. The callback is invoked before deletions are completed.
    * @returns Returning false from onDelete will prevent the change from being made.
@@ -51,7 +57,7 @@ export function CountInfoExtra<T extends object>(props: CountInfoExtraProps<T>) 
     const isAdd = isArray ? true : !(keyOrValue in value);
     const result = isArray ? [...value, keyOrValue] : { ...value, [keyOrValue]: undefined };
     if (onAdd && setValue) {
-      const maybeAdd = await onAdd(keyOrValue, result as T, props.value, isAdd);
+      const maybeAdd = await onAdd(keyOrValue, result as T, props.value, isAdd, { namespace });
       if (maybeAdd) {
         setValue!(result as T);
       }
